@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alessandro Gennari - AI Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F5F2;
+    --surface:#FFFFFF;
+    --ink:#14201C;
+    --muted:#5D6A65;
+    --line:#D8DDD7;
+    --green:#0E7A55;
+    --green-soft:#DDEEE5;
+    --font:"Schibsted Grotesk", system-ui, sans-serif;
+    --wrap:min(1160px, 100% - 3rem);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:5rem}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
+  ::selection{background:var(--green);color:#fff}
+
+  /* nav */
+  .nav{position:fixed;inset:0 0 auto;z-index:20;background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .3s}
+  .nav.scrolled{border-bottom-color:var(--line)}
+  .nav-inner{width:var(--wrap);margin:auto;height:4rem;display:flex;align-items:center;justify-content:flex-end;gap:2rem}
+  .brand{font-weight:800;text-decoration:none;letter-spacing:-.01em}
+  .nav ul{list-style:none;display:flex;gap:1.75rem}
+  .nav ul a{text-decoration:none;font-size:.95rem;color:var(--muted);transition:color .2s}
+  .nav ul a:hover,.nav ul a.active{color:var(--ink)}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;font-weight:600;font-size:.95rem;padding:.6rem 1rem;border-radius:8px;background:var(--ink);color:var(--paper);transition:background .2s}
+  .btn:hover{background:var(--green)}
+
+  /* hero */
+  .hero{width:var(--wrap);margin:auto;padding:8.5rem 0 4.5rem;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+  .id{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+  .id h1{font-size:clamp(1.6rem,2.6vw,2.1rem);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .id p{font-size:clamp(1.1rem,1.8vw,1.35rem);color:var(--green);font-weight:600}
+  .statement{
+    font-size:clamp(2.8rem,7.4vw,6.4rem);font-weight:800;line-height:1;letter-spacing:-.035em;
+    max-width:16ch;text-wrap:balance;
+  }
+  .statement .w{display:inline-block;opacity:0;transform:translateY(.35em);animation:word .7s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes word{to{opacity:1;transform:none}}
+
+  .path{position:relative;margin-top:3rem;height:190px}
+  .path canvas{position:absolute;inset:0;width:100%;height:100%}
+  .node{
+    position:absolute;top:50%;transform:translate(-50%,-50%);
+    text-decoration:none;opacity:0;transition:opacity .5s;
+  }
+  .node.show{opacity:1}
+  .node .dot{display:block;width:14px;height:14px;border-radius:50%;background:var(--paper);border:2.5px solid var(--green);transition:transform .2s,background .2s}
+  .node:hover .dot,.node:focus-visible .dot{transform:scale(1.25);background:var(--green)}
+  .node .lab{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%);white-space:nowrap;text-align:center;line-height:1.25}
+  .node .lab b{display:block;font-size:1.05rem;font-variant-numeric:tabular-nums}
+  .node .lab span{font-size:.85rem;color:var(--muted)}
+  .node.live .dot{background:var(--green);position:relative}
+  .node.live .dot::after{content:"";position:absolute;inset:-2.5px;border-radius:50%;border:2px solid var(--green);animation:ping 2.4s ease-out infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.6);opacity:0}}
+
+  .contact{display:flex;flex-wrap:wrap;gap:.75rem 2.25rem;margin-top:2.5rem;color:var(--muted)}
+  .contact a{text-decoration:none;color:var(--ink);font-weight:500;border-bottom:1px solid var(--line);transition:border-color .2s}
+  .contact a:hover{border-color:var(--green)}
+
+  /* sections */
+  .sec{width:var(--wrap);margin:auto;padding:6rem 0;border-top:1px solid var(--line);display:grid;grid-template-columns:15rem 1fr;gap:3rem}
+  .sec > h2{font-size:1.35rem;font-weight:700;letter-spacing:-.01em;line-height:1.3;position:sticky;top:6rem;align-self:start}
+
+  .summary p{font-size:clamp(1.3rem,2.1vw,1.7rem);line-height:1.45;letter-spacing:-.015em;color:var(--muted);max-width:42ch}
+  .summary p strong{color:var(--ink);font-weight:600}
+
+  /* experience */
+  .role + .role{margin-top:4.5rem}
+  .role-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;padding-bottom:1rem;border-bottom:2px solid var(--ink)}
+  .role-head h3{font-size:clamp(1.5rem,2.4vw,1.9rem);font-weight:800;letter-spacing:-.025em;line-height:1.15}
+  .role-head h3 span{font-weight:500;color:var(--muted)}
+  .role-head time{font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}
+  .role-head time.now{color:var(--green)}
+
+  .proj{display:grid;grid-template-columns:12rem 1fr 10.5rem;gap:2rem;padding:1.75rem 0;border-bottom:1px solid var(--line);position:relative}
+  .proj::before{content:"";position:absolute;left:-1.25rem;top:1.75rem;bottom:1.75rem;width:3px;border-radius:2px;background:var(--green);transform:scaleY(0);transform-origin:top;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+  .proj:hover::before{transform:scaleY(1)}
+  .sector{font-weight:700;line-height:1.35}
+  .desc{max-width:62ch}
+  .desc::first-letter{text-transform:uppercase}
+  .desc em{font-style:normal;font-weight:600;background:linear-gradient(var(--green-soft),var(--green-soft)) 0 88%/0% 45% no-repeat;transition:background-size 1s .3s cubic-bezier(.2,.7,.2,1)}
+  .desc em.on{background-size:100% 45%}
+  .stack{display:flex;flex-wrap:wrap;gap:.4rem;align-content:flex-start;justify-content:flex-end}
+  .tag{font-size:.8rem;font-weight:600;line-height:1;padding:.42rem .6rem;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+  .metric{width:100%;text-align:right;margin-bottom:.6rem}
+  .metric b{display:block;font-size:3.1rem;line-height:1;font-weight:800;letter-spacing:-.04em;color:var(--green);font-variant-numeric:tabular-nums}
+  .metric span{font-size:.85rem;color:var(--muted)}
+
+  /* skills */
+  .skills{display:grid;gap:0}
+  .skill-row{display:grid;grid-template-columns:9rem 1fr;gap:1.5rem;padding:1.1rem 0;border-bottom:1px solid var(--line);align-items:center}
+  .skill-row:first-child{border-top:1px solid var(--line)}
+  .skill-row h4{font-weight:600;color:var(--muted);font-size:1rem}
+  .skill-row .stack{justify-content:flex-start}
+  .skill-row .tag{font-size:.92rem;padding:.5rem .75rem}
+
+  /* education */
+  .edu{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.75rem}
+  .card h3{font-size:1.3rem;font-weight:700;letter-spacing:-.015em;line-height:1.25}
+  .card .school{color:var(--muted);margin-top:.35rem}
+  .grade{display:inline-block;margin-top:1.25rem;font-weight:700;font-size:1.15rem}
+  .grade.top{color:var(--green)}
+  .card .course{margin-top:1rem;font-size:.95rem;color:var(--muted);padding-top:1rem;border-top:1px solid var(--line)}
+  .card .course strong{color:var(--ink);font-weight:600}
+
+  .cert{background:var(--ink);color:var(--paper);border-radius:12px;padding:2.25rem;display:grid;grid-template-columns:auto 1fr;gap:1.75rem;align-items:start}
+  .seal{width:64px;height:64px}
+  .cert h3{font-size:1.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+  .cert p{margin-top:.6rem;color:color-mix(in srgb,var(--paper) 72%,transparent);max-width:60ch}
+
+  .langs{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  .langs div{border-top:2px solid var(--ink);padding-top:1rem}
+  .langs b{display:block;font-size:1.3rem;font-weight:700}
+  .langs span{color:var(--muted)}
+
+  /* footer */
+  footer{background:var(--ink);color:var(--paper);margin-top:2rem}
+  .foot{width:var(--wrap);margin:auto;padding:5rem 0 3rem}
+  .foot p.big{font-size:clamp(2rem,4.4vw,3.6rem);font-weight:800;letter-spacing:-.035em;line-height:1.05}
+  .foot p.big a{text-decoration:none;color:var(--green-soft);border-bottom:3px solid var(--green);transition:color .2s}
+  .foot p.big a:hover{color:#fff}
+  .foot .row{display:flex;flex-wrap:wrap;gap:1rem 2.5rem;margin-top:2.5rem;color:color-mix(in srgb,var(--paper) 70%,transparent)}
+  .foot .row a{text-decoration:none;color:var(--paper)}
+  .foot .row a:hover{color:var(--green-soft)}
+
+  @media (max-width:960px){
+    .sec{grid-template-columns:1fr;gap:1.75rem}
+    .sec > h2{position:static}
+    .proj{grid-template-columns:1fr;gap:.6rem}
+    .stack{justify-content:flex-start}
+    .metric{text-align:left;order:-1}
+    .proj::before{left:-.9rem}
+  }
+  @media (max-width:640px){
+    .nav ul{display:none}
+    .hero{padding-top:6.5rem}
+    .path{height:160px}
+    .node .lab span{display:none}
+    .edu,.langs{grid-template-columns:1fr}
+    .skill-row{grid-template-columns:1fr;gap:.6rem}
+    .cert{grid-template-columns:1fr}
+    .sec{padding:4rem 0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .statement .w{opacity:1;transform:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <ul>
+      <li><a href="#summary">Summary</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#education">Education</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="id">
+    <h1>Alessandro Gennari</h1>
+    <p>AI Engineer</p>
+  </div>
+  <p class="statement" id="statement">AI that makes it to production.</p>
+
+  <div class="path" id="path" aria-hidden="false">
+    <canvas id="thread" aria-hidden="true"></canvas>
+    <a class="node" href="#tiget" data-t="0.30"><span class="lab"><b>2022</b><span>San Raffaele TIGET</span></span><span class="dot"></span></a>
+    <a class="node" href="#analyst" data-t="0.55"><span class="lab"><b>2023</b><span>Analyst</span></span><span class="dot"></span></a>
+    <a class="node" href="#consultant" data-t="0.80"><span class="lab"><b>2026</b><span>Consultant</span></span><span class="dot"></span></a>
+    <a class="node live" href="#consultant" data-t="1"><span class="lab"><b>Present</b><span>&nbsp;</span></span><span class="dot"></span></a>
+  </div>
+
+</header>
+
+<main>
+  <section class="sec summary" id="summary">
+    <h2>Professional Summary</h2>
+    <p>AI Engineer with hands-on experience designing, developing, and delivering GenAI solutions across multiple industries. <strong>Proven ability to translate complex business needs into production-ready AI applications, with a growing focus on technical leadership.</strong> Focused on turning AI innovation into measurable business outcomes.</p>
+  </section>
+
+  <section class="sec" id="experience">
+    <h2>Work Experience</h2>
+    <div>
+      <div class="role" id="consultant">
+        <div class="role-head">
+          <h3>Accenture <span>— Consultant</span></h3>
+          <time class="now">2026 – Present</time>
+        </div>
+        <article class="proj">
+          <div class="sector">Consumer goods company</div>
+          <p class="desc">delivering a multi-agent pipeline to read emails, extract data entities, and store them in SAP, complemented by coverage KPIs, data transformation, and metric-based profiling.</p>
+          <div class="stack"><span class="tag">MAF</span><span class="tag">Azure</span></div>
+        </article>
+        <article class="proj">
+          <div class="sector">Product company</div>
+          <p class="desc">led a small team in building an Agents Platform for marketing, where multiple agents cooperate to collect market insight and elaborate marketing content.</p>
+          <div class="stack"><span class="tag">LangGraph</span><span class="tag">Azure</span></div>
+        </article>
+        <article class="proj">
+          <div class="sector">Digital payments company</div>
+          <p class="desc">delivered a GenAI RAG chatbot and voicebot for customer care, <em>reducing human load by 50%</em>. Designed the cloud architecture for the backend processes (knowledge base updates, RAG) and led the client Operation Team through the full lifecycle, from building the documentation to testing and improving the agent responses.</p>
+          <div class="stack">
+            <div class="metric"><b data-count="50">50%</b><span>human load</span></div>
+            <span class="tag">LangGraph</span><span class="tag">Azure</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="role" id="analyst">
+        <div class="role-head">
+          <h3>Accenture <span>— Analyst</span></h3>
+          <time>2023 – 2025</time>
+        </div>
+        <article class="proj">
+          <div class="sector">Automotive international company</div>
+          <p class="desc">developed multiple GenAI chatbots supporting customers across different scenarios — providing vehicle information, recommending products, and answering questions about recall campaigns.</p>
+          <div class="stack"></div>
+        </article>
+        <article class="proj">
+          <div class="sector">Energy company</div>
+          <p class="desc">built an AI agents pipeline generating a weekly report on energy prices, supply and demand. The tool extracts raw data from multiple providers, performs machine learning analysis, plots the results, and generates a textual description of the most relevant insights.</p>
+          <div class="stack"><span class="tag">LangChain</span><span class="tag">Python</span><span class="tag">AWS</span></div>
+        </article>
+      </div>
+
+      <div class="role" id="tiget">
+        <div class="role-head">
+          <h3>San Raffaele TIGET</h3>
+          <time>2022 – 2023</time>
+        </div>
+        <article class="proj">
+          <div class="sector"></div>
+          <p class="desc">Designed and benchmarked a Neo4j graph database for longitudinal patient data, outperforming a relational SQL alternative for complex clinical queries.</p>
+          <div class="stack"></div>
+        </article>
+        <article class="proj">
+          <div class="sector"></div>
+          <p class="desc">Applied Graph Data Science algorithms in Cypher for data mining.</p>
+          <div class="stack"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="skills">
+    <h2>Skills</h2>
+    <div class="skills">
+      <div class="skill-row"><h4>Languages</h4><div class="stack"><span class="tag">Python</span><span class="tag">SQL</span><span class="tag">R</span><span class="tag">React</span></div></div>
+      <div class="skill-row"><h4>Frameworks</h4><div class="stack"><span class="tag">LangChain</span><span class="tag">LlamaIndex</span><span class="tag">Claude Agent SDK</span><span class="tag">FastAPI</span><span class="tag">Streamlit</span></div></div>
+      <div class="skill-row"><h4>Tools</h4><div class="stack"><span class="tag">Git</span><span class="tag">Docker</span><span class="tag">Azure DevOps</span></div></div>
+      <div class="skill-row"><h4>Cloud</h4><div class="stack"><span class="tag">Azure</span><span class="tag">AWS</span><span class="tag">GCP</span></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="certification">
+    <h2>Certification</h2>
+    <div class="cert">
+      <svg class="seal" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="29" fill="none" stroke="#DDEEE5" stroke-width="2" stroke-dasharray="3 4"/>
+        <circle cx="32" cy="32" r="21" fill="#0E7A55"/>
+        <path d="M23 32.5l6 6 12-13" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div>
+        <h3>Claude Certified Architect</h3>
+        <p>Validates the ability to design and build production-grade applications with Claude using Claude Code, the Claude Agent SDK, the Claude API, and MCP.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="education">
+    <h2>Education</h2>
+    <div class="edu">
+      <article class="card">
+        <h3>Master's Degree in Bioinformatics for Computational Genomics</h3>
+        <p class="school">Politecnico di Milano</p>
+        <span class="grade top">110/110 cum laude</span>
+        <p class="course"><strong>Relevant coursework:</strong> machine learning, deep learning, statistical modeling, big data</p>
+      </article>
+      <article class="card">
+        <h3>Bachelor's Degree in Biotechnology</h3>
+        <p class="school">Università di Modena e Reggio Emilia</p>
+        <span class="grade">99/110</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="languages">
+    <h2>Languages</h2>
+    <div class="langs">
+      <div><b>Italian</b><span>Native</span></div>
+      <div><b>English</b><span>Professional working proficiency</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot">
+    <p class="big">Contact me<br><a href="mailto:a.gennari97@gmail.com">a.gennari97@gmail.com</a></p>
+    <div class="row">
+      <span>Milan, Italy</span>
+      <a href="tel:+393463897875">+39 346 389 7875</a>
+      <a href="https://www.linkedin.com/in/alessandro-gennari" target="_blank" rel="noopener">linkedin.com/in/alessandro-gennari</a>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- headline: word-by-word entrance ---- */
+  const st = document.getElementById('statement');
+  const words = st.textContent.trim().split(/\s+/);
+  st.innerHTML = words.map((w, i) => `<span class="w" style="animation-delay:${0.15 + i * 0.045}s">${w}</span>`).join(' ');
+  const headlineDone = reduce ? 0 : 0.15 + words.length * 0.045 + 0.2;
+
+  /* ---- thread: tangle -> straight production line ---- */
+  const cv = document.getElementById('thread'), ctx = cv.getContext('2d');
+  const wrap = document.getElementById('path');
+  const nodes = [...wrap.querySelectorAll('.node')];
+  const INK = [93, 106, 101], GREEN = [14, 122, 85];
+  const N = 480;
+  let W, H, pad, base = [];
+
+  function layout() {
+    const r = wrap.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; pad = 8;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    base = [];
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      const x0 = pad + t * (W - 2 * pad);
+      const loops = 14;
+      const ph = t * loops * Math.PI * 2;
+      const rad = H * 0.27 * (0.55 + 0.45 * Math.sin(t * 9 + 1.3) * Math.cos(t * 4.1));
+      const wander = H * 0.12 * Math.sin(t * 6.3 + 0.4) + H * 0.06 * Math.sin(t * 17);
+      base.push({ t, x0, tx: x0 + rad * 1.15 * Math.cos(ph) - rad * 0.4, ty: H / 2 + wander + rad * Math.sin(ph) });
+    }
+    nodes.forEach(n => n.style.left = (pad + (+n.dataset.t) * (W - 2 * pad)) + 'px');
+  }
+
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const ease = v => v < .5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2;
+
+  function draw(drawn, m) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const lim = Math.floor(drawn * (N - 1));
+    let prev = null;
+    for (let i = 0; i <= lim; i++) {
+      const p = base[i];
+      const s = ease(clamp((m * 1.3 - p.t) / 0.3));
+      const x = p.tx + (p.x0 - p.tx) * s, y = p.ty + (H / 2 - p.ty) * s;
+      if (prev) {
+        const c = INK.map((v, k) => Math.round(v + (GREEN[k] - v) * s));
+        ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${0.45 + 0.55 * s})`;
+        ctx.lineWidth = 1.4 + 1.4 * s;
+        ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(x, y); ctx.stroke();
+      }
+      prev = [x, y];
+    }
+    nodes.forEach(n => n.classList.toggle('show', ease(clamp((m * 1.3 - n.dataset.t) / 0.3)) > .92));
+  }
+
+  layout();
+  const DRAW = 1.3, HOLD = 0.35, STRAIGHT = 1.9;
+  if (reduce) draw(1, 1);
+  else {
+    let t0 = null;
+    const start = headlineDone - 0.6;
+    function frame(ts) {
+      if (t0 === null) t0 = ts;
+      const t = (ts - t0) / 1000 - start;
+      const drawn = clamp(t / DRAW);
+      const m = clamp((t - DRAW - HOLD) / STRAIGHT);
+      draw(ease(drawn), m);
+      if (m < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); draw(1, 1); }, 120); });
+
+  /* ---- metric count-up + highlight ---- */
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    const em = e.target.querySelector('em'); if (em) em.classList.add('on');
+    const b = e.target.querySelector('[data-count]');
+    if (b && !reduce) {
+      const to = +b.dataset.count, t0 = performance.now();
+      const tick = now => { const p = clamp((now - t0) / 1100); b.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + '%'; if (p < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    }
+  }), { threshold: .5 });
+  document.querySelectorAll('.proj').forEach(p => { if (p.querySelector('em,[data-count]')) io.observe(p); });
+
+  /* ---- nav state ---- */
+  const links = [...document.querySelectorAll('.nav ul a')];
+  function onScroll() {
+    document.getElementById('nav').classList.toggle('scrolled', scrollY > 10);
+    let cur = '';
+    document.querySelectorAll('main section[id]').forEach(s => { if (s.getBoundingClientRect().top < innerHeight * .4) cur = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  }
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+})();
+</script>
+</body>
+</html>
